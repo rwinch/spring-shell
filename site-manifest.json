@@ -1,6 +1,6 @@
 {
   "$id": "https://schemas.antora.org/site-manifest/1-0-0/draft-01",
-  "generated": "2023-08-03T20:05:09.419Z",
+  "generated": "2023-08-03T20:05:29.788Z",
   "url": "https://rwinch.github.io/spring-shell",
   "components": {
     "shell": {
