@@ -1,10 +1,10 @@
 {
   "$id": "https://schemas.antora.org/site-manifest/1-0-0/draft-01",
-  "generated": "2023-08-03T19:52:46.487Z",
+  "generated": "2023-08-03T20:04:56.472Z",
   "url": "https://rwinch.github.io/spring-shell",
   "components": {
     "shell": {
-      "title": "Spring Shell Documentation",
+      "title": "Spring Shell",
       "latest": "3.2.0",
       "versions": {
         "3.2.0": {
