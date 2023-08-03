@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Types :: Spring Shell</title>
+    <link rel="prev" href="using-shell-options-label.html">
+    <link rel="next" href="using-shell-options-naming.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -403,7 +404,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="using-shell-options-label.html">Label</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="using-shell-options-types.html">Types</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Types"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-options-types.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,249 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-options.html">Options</a></li>
+    <li><a href="using-shell-options-types.html">Types</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Types</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>This section talks about how particular data type is used as an option value.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="string"><a class="anchor" href="#string"></a>String</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>String</code> is a most simplest type as there&#8217;s no conversion involved as what&#8217;s
+coming in from a user is always a string.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">String example(@ShellOption(value = "arg1") String arg1) {
+	return "Hello " + arg1;
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>While it&#8217;s not strictly required to define type as a <code>String</code> it&#8217;s always
+adviced to do so.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration.builder()
+	.command("example")
+	.withOption()
+		.longNames("arg1")
+		.type(String.class)
+		.required()
+		.and()
+	.withTarget()
+		.function(ctx -&gt; {
+			String arg1 = ctx.getOptionValue("arg1");
+			return "Hello " + arg1;
+		})
+		.and()
+	.build();</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="boolean"><a class="anchor" href="#boolean"></a>Boolean</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>Using boolean types is a bit more involved as there are <code>boolean</code> and
+<code>Boolean</code> where latter can be <em>null</em>. Boolean types are usually used as
+flags meaning argument value may not be needed.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">String example(
+	@ShellOption() boolean arg1,
+	@ShellOption(defaultValue = "true") boolean arg2,
+	@ShellOption(defaultValue = "false") boolean arg3,
+	@ShellOption() Boolean arg4,
+	@ShellOption(defaultValue = "true") Boolean arg5,
+	@ShellOption(defaultValue = "false") Boolean arg6
+) {
+	return String.format("arg1=%s arg2=%s arg3=%s arg4=%s arg5=%s arg6=%s",
+			arg1, arg2, arg3, arg4, arg5, arg6);
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">shell:&gt;example
+arg1=false arg2=true arg3=false arg4=false arg5=true arg6=false
+
+shell:&gt;example --arg4
+arg1=false arg2=true arg3=false arg4=true arg5=true arg6=false
+
+shell:&gt;example --arg4 false
+arg1=false arg2=true arg3=false arg4=false arg5=true arg6=false</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration.builder()
+	.command("example")
+	.withOption()
+		.longNames("arg1").type(boolean.class).and()
+	.withOption()
+		.longNames("arg2").type(boolean.class).defaultValue("true").and()
+	.withOption()
+		.longNames("arg3").type(boolean.class).defaultValue("false").and()
+	.withOption()
+		.longNames("arg4").type(Boolean.class).and()
+	.withOption()
+		.longNames("arg5").type(Boolean.class).defaultValue("true").and()
+	.withOption()
+		.longNames("arg6").type(Boolean.class).defaultValue("false").and()
+	.withTarget()
+		.function(ctx -&gt; {
+			boolean arg1 = ctx.hasMappedOption("arg1")
+					? ctx.getOptionValue("arg1")
+					: false;
+			boolean arg2 = ctx.getOptionValue("arg2");
+			boolean arg3 = ctx.getOptionValue("arg3");
+			Boolean arg4 = ctx.getOptionValue("arg4");
+			Boolean arg5 = ctx.getOptionValue("arg5");
+			Boolean arg6 = ctx.getOptionValue("arg6");
+			return String.format("Hello arg1=%s arg2=%s arg3=%s arg4=%s arg5=%s arg6=%s",
+					arg1, arg2, arg3, arg4, arg5, arg6);
+		})
+		.and()
+	.build();</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">shell:&gt;example
+arg1=false arg2=true arg3=false arg4=null arg5=true arg6=false
+
+shell:&gt;example --arg4
+arg1=false arg2=true arg3=false arg4=true arg5=true arg6=false
+
+shell:&gt;example --arg4 false
+arg1=false arg2=true arg3=false arg4=false arg5=true arg6=false</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="number"><a class="anchor" href="#number"></a>Number</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>Numbers are converted as is.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">String example(@ShellOption(value = "arg1") int arg1) {
+	return "Hello " + arg1;
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration.builder()
+	.command("example")
+	.withOption()
+		.longNames("arg1")
+		.type(int.class)
+		.required()
+		.and()
+	.withTarget()
+		.function(ctx -&gt; {
+			boolean arg1 = ctx.getOptionValue("arg1");
+			return "Hello " + arg1;
+		})
+		.and()
+	.build();</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="enum"><a class="anchor" href="#enum"></a>Enum</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>Conversion to enums is possible if given value is exactly matching enum itself.
+Currently you can convert assuming case insensitivity.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">enum OptionTypeEnum {
+	ONE,TWO,THREE
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">String example(@ShellOption(value = "arg1") OptionTypeEnum arg1) {
+	return "Hello " + arg1;
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration.builder()
+	.command("example")
+	.withOption()
+		.longNames("arg1")
+		.type(OptionTypeEnum.class)
+		.required()
+		.and()
+	.withTarget()
+		.function(ctx -&gt; {
+			OptionTypeEnum arg1 = ctx.getOptionValue("arg1");
+			return "Hello " + arg1;
+		})
+		.and()
+	.build();</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="array"><a class="anchor" href="#array"></a>Array</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<p>Arrays can be used as is with strings and primitive types.</p>
 </div>
-<div class="section-summary">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">String example(@ShellOption(value = "arg1") String[] arg1) {
+	return "Hello " + arg1;
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration.builder()
+	.command("example")
+	.withOption()
+		.longNames("arg1")
+		.type(String[].class)
+		.required()
+		.and()
+	.withTarget()
+		.function(ctx -&gt; {
+			String[] arg1 = ctx.getOptionValue("arg1");
+			return "Hello " + arg1;
+		})
+		.and()
+	.build();</code></pre>
+</div>
+</div>
+</div>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-options-label.html">Label</a></span>
+  <span class="next"><a href="using-shell-options-naming.html">Naming</a></span>
 </nav>
 </article>
 </div>  </div>

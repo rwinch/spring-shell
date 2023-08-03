@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Exception Resolving :: Spring Shell</title>
+    <link rel="prev" href="using-shell-commands-exceptionhandling.html">
+    <link rel="next" href="using-shell-commands-exceptionhandling-mappings.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -308,7 +309,7 @@
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="using-shell-commands-exceptionhandling.html">Exception Handling</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
+  <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="using-shell-commands-exceptionhandling-resolving.html">Exception Resolving</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Exception Resolving"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-commands-exceptionhandling-resolving.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,96 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-commands.html">Commands</a></li>
+    <li><a href="using-shell-commands-exceptionhandling.html">Exception Handling</a></li>
+    <li><a href="using-shell-commands-exceptionhandling-resolving.html">Exception Resolving</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Exception Resolving</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>Unhandled exceptions will bubble up into shell&#8217;s <code>ResultHandlerService</code> and then eventually
+handled by some instance of <code>ResultHandler</code>. Chain of <code>ExceptionResolver</code> implementations
+can be used to resolve exceptions and gives you flexibility to return message to get written
+into console together with exit code which are wrapped within <code>CommandHandlingResult</code>.
+<code>CommandHandlingResult</code> may contain a <em>message</em> and/or <em>exit code</em>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">static class CustomExceptionResolver implements CommandExceptionResolver {
+
+	@Override
+	public CommandHandlingResult resolve(Exception e) {
+		if (e instanceof CustomException) {
+			return CommandHandlingResult.of("Hi, handled exception\n", 42);
+		}
+		return null;
+	}
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p><code>CommandExceptionResolver</code> implementations can be defined globally as bean.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Bean
+CustomExceptionResolver customExceptionResolver() {
+	return new CustomExceptionResolver();
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>or defined per <code>CommandRegistration</code> if it&#8217;s applicable only for a particular command itself.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration.builder()
+	.withErrorHandling()
+		.resolver(new CustomExceptionResolver())
+		.and()
+	.build();</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Resolvers defined with a command are handled before global resolvers.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>Use you own exception types which can also be an instance of boot&#8217;s <code>ExitCodeGenerator</code> if
+you want to define exit code there.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">static class CustomException extends RuntimeException implements ExitCodeGenerator {
+
+	@Override
+	public int getExitCode() {
+		return 0;
+	}
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
-</div>
-<div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
-</div>
-<div class="section-summary">
+<p>Some build in <code>CommandExceptionResolver</code> beans are registered to handle common
+exceptions thrown from command parsing. These are registered with <em>order</em>
+presedence defined in <code>CommandExceptionResolver.DEFAULT_PRECEDENCE</code>.
+As these beans are used in a given order, <code>@Order</code> annotation or <code>Ordered</code>
+interface from can be used just like in any other spring app. This
+is generally useful if you need to control your own beans to get used
+either before or after a defaults.</p>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-commands-exceptionhandling.html">Exception Handling</a></span>
+  <span class="next"><a href="using-shell-commands-exceptionhandling-mappings.html">Exit Code Mappings</a></span>
 </nav>
 </article>
 </div>  </div>

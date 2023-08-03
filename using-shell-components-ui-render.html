@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Component Render :: Spring Shell</title>
+    <link rel="prev" href="using-shell-components-ui.html">
+    <link rel="next" href="using-shell-components-ui-stringinput.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -428,7 +429,7 @@
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="using-shell-components-ui.html">Flow Components</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
+  <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="using-shell-components-ui-render.html">Component Render</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Component Render"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-components-ui-render.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,184 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-components.html">Components</a></li>
+    <li><a href="using-shell-components-ui.html">Flow Components</a></li>
+    <li><a href="using-shell-components-ui-render.html">Component Render</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Component Render</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
-</div>
-<div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
-</div>
-<div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>You can implement component rendering in either of two ways: fully
+programmatically or by using a <em>ANTLR Stringtemplate</em>.
+Strictly speaking, there is a simple <code>Function</code> renderer interface
+that takes <code>Context</code> as an input and outputs a list of <code>AttributedString</code>.
+This lets you choose between templating and code.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>Templating is a good choice if you do not need to do anything complex or
+you just want to slightly modify existing component layouts. Rendering
+through code then gives you flexibility to do whatever you need.</p>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>The programmatic way to render is to create a <code>Function</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class StringInputCustomRenderer implements Function&lt;StringInputContext, List&lt;AttributedString&gt;&gt; {
+	@Override
+	public List&lt;AttributedString&gt; apply(StringInputContext context) {
+		AttributedStringBuilder builder = new AttributedStringBuilder();
+		builder.append(context.getName());
+		builder.append(" ");
+		if (context.getResultValue() != null) {
+			builder.append(context.getResultValue());
+		}
+		else  {
+			String input = context.getInput();
+			if (StringUtils.hasText(input)) {
+				builder.append(input);
+			}
+			else {
+				builder.append("[Default " + context.getDefaultValue() + "]");
+			}
+		}
+		return Arrays.asList(builder.toAttributedString());
+	}
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<p>Then you can hook it to a component:</p>
 </div>
-<div class="section-summary">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ShellMethod(key = "component stringcustom", value = "String input", group = "Components")
+public String stringInputCustom(boolean mask) {
+	StringInput component = new StringInput(getTerminal(), "Enter value", "myvalue",
+			new StringInputCustomRenderer());
+	component.setResourceLoader(getResourceLoader());
+	component.setTemplateExecutor(getTemplateExecutor());
+	if (mask) {
+		component.setMaskCharacter('*');
+	}
+	StringInputContext context = component.run(StringInputContext.empty());
+	return "Got value " + context.getResultValue();
+}</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Components have their own context but usually share some functionality
+from a parent component types. The following tables show those context variables:</p>
+</div>
+<table id="textcomponentcontext-template-variables" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. TextComponentContext Template Variables</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>resultValue</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The value after a component renders its result.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of a component&#8201;&#8212;&#8201;that is, its title.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The possible message set for a component.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>messageLevel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The level of a message&#8201;&#8212;&#8201;one of <code>INFO</code>, <code>WARN</code>, or <code>ERROR</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasMessageLevelInfo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code>true</code> if level is <code>INFO</code>. Otherwise, false.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasMessageLevelWarn</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code>true</code> if level is <code>WARN</code>. Otherwise, false.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasMessageLevelError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code>true</code> if level is <code>ERROR</code>. Otherwise, false.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The raw user input.</p></td>
+</tr>
+</tbody>
+</table>
+<table id="selectorcomponentcontext-template-variables" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. SelectorComponentContext Template Variables</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of a component&#8201;&#8212;&#8201;that is, its title.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The raw user input&#8201;&#8212;&#8201;mostly used for filtering.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>itemStates</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The full list of item states.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>itemStateView</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The visible list of item states.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isResult</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code>true</code> if the context is in a result mode.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cursorRow</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current cursor row in a selector.</p></td>
+</tr>
+</tbody>
+</table>
+<table id="componentcontext-template-variables" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. ComponentContext Template Variables</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>terminalWidth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The width of terminal, type is <em>Integer</em> and defaults to <em>NULL</em> if not set.</p></td>
+</tr>
+</tbody>
+</table>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-components-ui.html">Flow Components</a></span>
+  <span class="next"><a href="using-shell-components-ui-stringinput.html">String Input</a></span>
 </nav>
 </article>
 </div>  </div>

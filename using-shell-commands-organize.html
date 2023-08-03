@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Organizing Commands :: Spring Shell</title>
+    <link rel="prev" href="using-shell-commands-registration-legacyannotation.html">
+    <link rel="next" href="using-shell-commands-availability.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -298,7 +299,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="using-shell-commands-registration-legacyannotation.html">Legacy Annotation</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="using-shell-commands-organize.html">Organizing Commands</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Organizing Commands"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-commands-organize.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,79 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-commands.html">Commands</a></li>
+    <li><a href="using-shell-commands-organize.html">Organizing Commands</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Organizing Commands</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>When your shell starts to provide a lot of functionality, you may end up
+with a lot of commands, which could be confusing for your users. By typing <code>help</code>,
+they would see a daunting list of commands, organized in alphabetical order,
+which may not always be the best way to show the available commands.</p>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>To alleviate this possible confusion, Spring Shell provides the ability to group commands together,
+with reasonable defaults. Related commands would then end up in the same group (for example, <code>User Management Commands</code>)
+and be displayed together in the help screen and other places.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>By default, commands are grouped according to the class they are implemented in,
+turning the camelCase class name into separate words (so <code>URLRelatedCommands</code> becomes <code>URL Related Commands</code>).
+This is a sensible default, as related commands are often already in the class anyway,
+because they need to use the same collaborating objects.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>If, however, this behavior does not suit you, you can override the group for a
+command in the following ways, in order of priority:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Specify a <code>group()</code> in the <code>@ShellMethod</code> annotation.</p>
+</li>
+<li>
+<p>Place a <code>@ShellCommandGroup</code> on the class in which the command is defined. This applies
+the group for all commands defined in that class (unless overridden, as explained earlier).</p>
+</li>
+<li>
+<p>Place a <code>@ShellCommandGroup</code> on the package (through <code>package-info.java</code>)
+in which the command is defined. This applies to all the commands defined in the
+package (unless overridden at the method or class level, as explained earlier).</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>The following listing shows an example:</p>
 </div>
-<div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class UserCommands {
+    @ShellMethod(value = "This command ends up in the 'User Commands' group")
+    public void foo() {}
+
+    @ShellMethod(value = "This command ends up in the 'Other Commands' group",
+    	group = "Other Commands")
+    public void bar() {}
+}
+
+...
+
+@ShellCommandGroup("Other Commands")
+public class SomeCommands {
+	@ShellMethod(value = "This one is in 'Other Commands'")
+	public void wizz() {}
+
+	@ShellMethod(value = "And this one is 'Yet Another Group'",
+		group = "Yet Another Group")
+	public void last() {}
+}</code></pre>
 </div>
-<div class="section-summary">
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-commands-registration-legacyannotation.html">Legacy Annotation</a></span>
+  <span class="next"><a href="using-shell-commands-availability.html">Dynamic Command Availability</a></span>
 </nav>
 </article>
 </div>  </div>

@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Building :: Spring Shell</title>
+    <link rel="prev" href="using-shell-completion.html">
+    <link rel="next" href="using-shell-components.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -414,7 +415,7 @@
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="using-shell-completion.html">Completion</a>
   </li>
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="using-shell-building.html">Building</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Building"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-building.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,117 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-building.html">Building</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Building</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>This section covers how to build a Spring Shell application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="native"><a class="anchor" href="#native"></a>Native Support</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Support for compiling <em>Spring Shell</em> application into a <em>GraalVM</em> binary
+mostly comes from <em>Spring Framework</em> and <em>Spring Boot</em> where feature is
+called <em>AOT</em>. Ahead of Time means that application context is prepared
+during the compilation time to being ready for <em>GraalVM</em> generation.</p>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>Building atop of <em>AOT</em> features from a framework <em>Spring Shell</em> has its
+own <em>GraalVM</em> configuration providing hints what should exist in
+a binary. Usually trouble comes from a 3rd party libraries which doesn&#8217;t
+yet contain <em>GraalVM</em> related configurations or those configurations
+are incomplete.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+It is requred to use <em>GraalVM Reachability Metadata Repository</em> which
+provides some missing hints for 3rd party libraries. Also you need to have
+<em>GraalVM</em> installed and <code>JAVA_HOME</code> pointing to that.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>For <em>gradle</em> add graalvm&#8217;s native plugin and configure metadata repository.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">plugins {
+	id 'org.graalvm.buildtools.native' version '0.9.16'
+}
+
+graalvmNative {
+	metadataRepository {
+        enabled = true
+	}
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>When gradle build is run with <code>./gradlew nativeCompile</code> you should get binary
+under <code>build/native/nativeCompile</code> directory.</p>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>For <code>maven</code> use <code>spring-boot-starter-parent</code> as parent and you&#8217;ll get <code>native</code>
+profile which can be used to do a compilation. You need to configure metadata repository</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;build&gt;
+    &lt;pluginManagement&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.graalvm.buildtools&lt;/groupId&gt;
+                &lt;artifactId&gt;native-maven-plugin&lt;/artifactId&gt;
+                &lt;configuration&gt;
+                    &lt;metadataRepository&gt;
+                        &lt;enabled&gt;true&lt;/enabled&gt;
+                    &lt;/metadataRepository&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/pluginManagement&gt;
+&lt;/build&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you rely on <code>spring-boot-starter-parent</code> it manages <code>native-maven-plugin</code>
+version which is kept up to date.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<p>When maven build is run with <code>./mvnw package -Pnative</code> you should get binary
+under <code>target</code> directory.</p>
 </div>
-<div class="section-summary">
+<div class="paragraph">
+<p>If everything went well this binary can be run as is instead of executing
+boot application jar via jvm.</p>
+</div>
+</div>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-completion.html">Completion</a></span>
+  <span class="next"><a href="using-shell-components.html">Components</a></span>
 </nav>
 </article>
 </div>  </div>

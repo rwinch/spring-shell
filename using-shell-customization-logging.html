@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Logging :: Spring Shell</title>
+    <link rel="prev" href="using-shell-customization-styling.html">
+    <link rel="next" href="using-shell-customization-commandnotfound.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -481,7 +482,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="using-shell-customization-styling.html">Theming</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="using-shell-customization-logging.html">Logging</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Logging"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-customization-logging.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,75 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-customization.html">Customization</a></li>
+    <li><a href="using-shell-customization-logging.html">Logging</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Logging</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>On default a <em>Spring Boot</em> application will log messages into a console which
+at minimum is annoying and may also mix output from a shell commands.
+Fortunately there is a simple way to instruct logging changes via boot properties.</p>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>Completely silence console logging by defining its pattern as an empty value.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">logging:
+  pattern:
+    console:</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>If you need log from a shell then write those into a file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">logging:
+  file:
+    name: shell.log</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>If you need different log levels.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">logging:
+  level:
+    org:
+      springframework:
+        shell: debug</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>Passing contiguration properties as command line options is not supported but
+you can use any other ways supported by boot, for example.</p>
 </div>
-<div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ java -Dlogging.level.root=debug -jar demo.jar
+$ LOGGING_LEVEL_ROOT=debug java -jar demo.jar</code></pre>
 </div>
-<div class="section-summary">
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In a GraalVM image settings are locked during compilation which means
+      you can&#8217;t change log levels at runtime.
+</td>
+</tr>
+</table>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-customization-styling.html">Theming</a></span>
+  <span class="next"><a href="using-shell-customization-commandnotfound.html">Command Not Found</a></span>
 </nav>
 </article>
 </div>  </div>

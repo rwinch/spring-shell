@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Exit Code Mappings :: Spring Shell</title>
+    <link rel="prev" href="using-shell-commands-exceptionhandling-resolving.html">
+    <link rel="next" href="using-shell-commands-exceptionhandling-annotation.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -311,7 +312,7 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="using-shell-commands-exceptionhandling-resolving.html">Exception Resolving</a>
   </li>
-  <li class="nav-item" data-depth="3">
+  <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="using-shell-commands-exceptionhandling-mappings.html">Exit Code Mappings</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Exit Code Mappings"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-commands-exceptionhandling-mappings.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,88 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-commands.html">Commands</a></li>
+    <li><a href="using-shell-commands-exceptionhandling.html">Exception Handling</a></li>
+    <li><a href="using-shell-commands-exceptionhandling-mappings.html">Exit Code Mappings</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Exit Code Mappings</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>Default behaviour of an exit codes is as:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Errors from a command option parsing will result code of <code>2</code></p>
+</li>
+<li>
+<p>Any generic error will result result code of <code>1</code></p>
+</li>
+<li>
+<p>Obviously in any other case result code is <code>0</code></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>Every <code>CommandRegistration</code> can define its own mappings between <em>Exception</em> and <em>exit code</em>.
+Essentially we&#8217;re bound to functionality in <code>Spring Boot</code> regarding <em>exit code</em> and simply
+integrate into that.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>Assuming there is an exception show below which would be thrown from a command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">static class MyException extends RuntimeException {
+
+	private final int code;
+
+	MyException(String msg, int code) {
+		super(msg);
+		this.code = code;
+	}
+
+	public int getCode() {
+		return code;
+	}
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>It is possible to define a mapping function between <code>Throwable</code> and exit code. You can also
+just configure a <em>class</em> to <em>exit code</em> which is just a syntactic sugar within configurations.</p>
 </div>
-<div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration.builder()
+	.withExitCode()
+		.map(MyException.class, 3)
+		.map(t -&gt; {
+			if (t instanceof MyException) {
+				return ((MyException) t).getCode();
+			}
+			return 0;
+		})
+		.and()
+	.build();</code></pre>
 </div>
-<div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
 </div>
-<div class="section-summary">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Exit codes cannot be customized with annotation based configuration
+</td>
+</tr>
+</table>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-commands-exceptionhandling-resolving.html">Exception Resolving</a></span>
+  <span class="next"><a href="using-shell-commands-exceptionhandling-annotation.html">@ExceptionResolver</a></span>
 </nav>
 </article>
 </div>  </div>

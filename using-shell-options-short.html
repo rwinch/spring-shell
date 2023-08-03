@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Short Format :: Spring Shell</title>
+    <link rel="prev" href="using-shell-options-basics-legacyannotation.html">
+    <link rel="next" href="using-shell-options-arity.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -382,7 +383,7 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="using-shell-options-short.html">Short Format</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Short Format"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-options-short.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,163 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-options.html">Options</a></li>
+    <li><a href="using-shell-options-short.html">Short Format</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Short Format</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>Short style <em>POSIX</em> option is usually just a synonym to long format. As
+shown below option <code>--arg</code> is equal to <code>-a</code>.</p>
+</div>
+<div id="_tabs_1" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_1_programmatic" class="tab">
+<p>Programmatic</p>
+</li>
+<li id="_tabs_1_annotation" class="tab">
+<p>Annotation</p>
+</li>
+<li id="_tabs_1_legacy_annotation" class="tab">
+<p>Legacy Annotation</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_1_programmatic--panel" class="tabpanel" aria-labelledby="_tabs_1_programmatic">
+<div class="listingblock primary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration stringWithShortOption() {
+	return CommandRegistration.builder()
+		.command("example")
+		.withTarget()
+			.function(ctx -&gt; {
+				String arg = ctx.hasMappedOption("arg") ? ctx.getOptionValue("arg") : null;
+				return String.format("Hi arg='%s'", arg);
+			})
+			.and()
+		.withOption()
+			.longNames("arg")
+			.shortNames('a')
+			.required()
+			.and()
+		.build();
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_1_annotation--panel" class="tabpanel" aria-labelledby="_tabs_1_annotation">
+<div class="listingblock secondary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Command(command = "example")
+String stringWithShortOption(
+		@Option(longNames = "arg", shortNames = 'a', required = true) String arg) {
+	return String.format("Hi '%s'", arg);
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_1_legacy_annotation--panel" class="tabpanel" aria-labelledby="_tabs_1_legacy_annotation">
+<div class="listingblock secondary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ShellMethod(key = "example")
+String stringWithShortOption(
+		@ShellOption(value = { "--arg", "-a" }) String arg)		{
+	return String.format("Hi '%s'", arg);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>Short option with combined format is powerful if type is defined as a flag
+which means type is a <em>boolean</em>. That way you can define a presence of a flags
+as <code>-abc</code>, <code>-abc true</code> or <code>-abc false</code>.</p>
 </div>
-<div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<div id="_tabs_2" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_2_programmatic" class="tab">
+<p>Programmatic</p>
+</li>
+<li id="_tabs_2_annotation" class="tab">
+<p>Annotation</p>
+</li>
+<li id="_tabs_2_legacy_annotation" class="tab">
+<p>Legacy Annotation</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<div id="_tabs_2_programmatic--panel" class="tabpanel" aria-labelledby="_tabs_2_programmatic">
+<div class="listingblock primary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration multipleBooleans() {
+	return CommandRegistration.builder()
+		.command("example")
+		.withTarget()
+			.function(ctx -&gt; {
+				Boolean a = ctx.hasMappedOption("a") ? ctx.getOptionValue("a") : null;
+				Boolean b = ctx.hasMappedOption("b") ? ctx.getOptionValue("b") : null;
+				Boolean c = ctx.hasMappedOption("c") ? ctx.getOptionValue("c") : null;
+				return String.format("Hi a='%s' b='%s' c='%s'", a, b, c);
+			})
+			.and()
+		.withOption()
+			.shortNames('a')
+			.type(boolean.class)
+			.defaultValue("false")
+			.and()
+		.withOption()
+			.shortNames('b')
+			.type(boolean.class)
+			.defaultValue("false")
+			.and()
+		.withOption()
+			.shortNames('c')
+			.type(boolean.class)
+			.defaultValue("false")
+			.and()
+		.build();
+}</code></pre>
 </div>
-<div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
 </div>
-<div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
 </div>
-<div class="section-summary">
+<div id="_tabs_2_annotation--panel" class="tabpanel" aria-labelledby="_tabs_2_annotation">
+<div class="listingblock secondary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Command(command = "example")
+public String multipleBooleans(
+		@Option(shortNames = 'a') boolean a,
+		@Option(shortNames = 'b') boolean b,
+		@Option(shortNames = 'c') boolean c) {
+	return String.format("Hi a='%s' b='%s' c='%s'", a, b, c);
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_2_legacy_annotation--panel" class="tabpanel" aria-labelledby="_tabs_2_legacy_annotation">
+<div class="listingblock secondary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ShellMethod(key = "example")
+public String multipleBooleans(
+		@ShellOption(value = "-a") boolean a,
+		@ShellOption(value = "-b") boolean b,
+		@ShellOption(value = "-c") boolean c)
+{
+	return String.format("Hi a='%s' b='%s' c='%s'", a, b, c);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-options-basics-legacyannotation.html">Legacy Annotation</a></span>
+  <span class="next"><a href="using-shell-options-arity.html">Arity</a></span>
 </nav>
 </article>
 </div>  </div>

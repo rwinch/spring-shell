@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Settings :: Spring Shell</title>
+    <link rel="prev" href="using-shell-testing-basics.html">
+    <link rel="next" href="appendices-techical-intro.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -502,7 +503,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="using-shell-testing-basics.html">Basics</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="using-shell-testing-settings.html">Settings</a>
   </li>
 </ul>
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Settings"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-testing-settings.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,43 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-testing.html">Testing</a></li>
+    <li><a href="using-shell-testing-settings.html">Settings</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Settings</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>Built in emulation uses terminal width 80 and height 24 on default.
+Changing dimensions is useful if output would span into multiple
+lines and you don&#8217;t want to handle those cases in a tests.</p>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>These can be changed using properties <code>spring.shell.test.terminal-width</code>
+or <code>spring.shell.test.terminal-height</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ShellTest(properties = {
+	"spring.shell.test.terminal-width=120",
+	"spring.shell.test.terminal-height=40"
+})
+class ShellSettingsSample {}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p><code>ShellTest</code> annotation have fields <code>terminalWidth</code> and <code>terminalHeight</code>
+which can also be used to change dimensions.</p>
 </div>
-<div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ShellTest(terminalWidth = 120, terminalHeight = 40)
+class ShellSettingsSample {}</code></pre>
 </div>
-<div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
-</div>
-<div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
-</div>
-<div class="section-summary">
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-testing-basics.html">Basics</a></span>
+  <span class="next"><a href="appendices-techical-intro.html">Techical Introduction</a></span>
 </nav>
 </article>
 </div>  </div>

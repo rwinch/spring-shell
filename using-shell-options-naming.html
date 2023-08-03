@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Naming :: Spring Shell</title>
+    <link rel="prev" href="using-shell-options-types.html">
+    <link rel="next" href="using-shell-completion.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -406,7 +407,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="using-shell-options-types.html">Types</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="using-shell-options-naming.html">Naming</a>
   </li>
 </ul>
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Naming"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-options-naming.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,145 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-options.html">Options</a></li>
+    <li><a href="using-shell-options-naming.html">Naming</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Naming</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>If there is a need to modify option long names that can be done
+using <code>OptionNameModifier</code> interface which is a simple
+<code>Function&lt;String, String&gt;</code>. In this interface original option
+name goes in and modified name comes out.</p>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>Modifier can be defined per <code>OptionSpec</code> in <code>CommandRegistration</code>,
+defaulting globally as bean or via configuration properties.
+Modifier defined manually in <code>OptionSpec</code> takes takes precedence
+over one defined globally. There is no global modifier defined
+on default.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>You can define one with an option in <code>CommandRegistration</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration.builder()
+	.withOption()
+		.longNames("arg1")
+		.nameModifier(name -&gt; "x" + name)
+		.and()
+	.build();</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>Add one <em>singleton bean</em> as type <code>OptionNameModifier</code> and that becomes
+a global default.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Bean
+OptionNameModifier sampleOptionNameModifier() {
+	return name -&gt; "x" + name;
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>It&#8217;s also possible to just add configuration property with
+<code>spring.shell.option.naming.case-type</code> which auto-configures
+one based on a type defined.</p>
 </div>
 <div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<p><code>noop</code> is to do nothing, <code>camel</code>, <code>snake</code>, <code>kebab</code>, <code>pascal</code>
+activates build-in modifiers for <code>camelCase</code>, <code>snake_case</code>,
+<code>kebab-case</code> or <code>PascalCase</code> respectively.</p>
 </div>
-<div class="section-summary">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If creating <code>CommandRegistration</code> beans directly, global
+default via configuration properies only work if using
+pre-configured <code>Builder</code> instance. See more
+<a href="#using-shell-commands-programmaticmodel">[using-shell-commands-programmaticmodel]</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">spring:
+  shell:
+     option:
+       naming:
+         case-type: noop
+         # case-type: camel
+         # case-type: snake
+         # case-type: kebab
+         # case-type: pascal</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For example options defined in an annotated method like this.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ShellMethod(key = "option-naming-sample")
+public void optionNamingSample(
+	@ShellOption("from_snake") String snake,
+	@ShellOption("fromCamel") String camel,
+	@ShellOption("from-kebab") String kebab,
+	@ShellOption("FromPascal") String pascal
+) {}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>On default <code>help</code> for that command shows names coming
+directly from <code>@ShellOption</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">OPTIONS
+       --from_snake String
+       [Mandatory]
+
+       --fromCamel String
+       [Mandatory]
+
+       --from-kebab String
+       [Mandatory]
+
+       --FromPascal String
+       [Mandatory]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Define <code>spring.shell.option.naming.case-type=kebab</code> and default
+modifier is added and option names then look like.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">OPTIONS
+       --from-snake String
+       [Mandatory]
+
+       --from-camel String
+       [Mandatory]
+
+       --from-kebab String
+       [Mandatory]
+
+       --from-pascal String
+       [Mandatory]</code></pre>
+</div>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-options-types.html">Types</a></span>
+  <span class="next"><a href="using-shell-completion.html">Completion</a></span>
 </nav>
 </article>
 </div>  </div>

@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Theming :: Spring Shell</title>
+    <link rel="prev" href="appendices-techical-intro-commandcatalog.html">
+    <link rel="next" href="appendices-techical-intro-searchalgorithm.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -530,7 +531,7 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="appendices-techical-intro-commandcatalog.html">Command Catalog</a>
   </li>
-  <li class="nav-item" data-depth="3">
+  <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="appendices-techical-intro-theming.html">Theming</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Theming"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/appendices-techical-intro-theming.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,83 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li>Appendices</li>
+    <li><a href="appendices-techical-intro.html">Techical Introduction</a></li>
+    <li><a href="appendices-techical-intro-theming.html">Theming</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Theming</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>Styling in a theming is provided by a use of a <em>AttributedString</em> from <code>JLine</code>.
+Unfortunately styling in <code>JLine</code> is mostly undocumented but we try to go through
+some of its features here.</p>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>In <code>JLine</code> a style spec is a string having a special format. Spec can be given
+multiple times if separated by a comma. A spec will either define a color for
+foreground, background or its mode. Special format <code>&lt;spec&gt;:=&lt;spec&gt;</code> allows to
+define a default within latter spec if former for some reason is invalid.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>If spec contains a colon its former part indicates either foreground or background
+and possible values are <code>foreground</code>, <code>fg</code>, <code>f</code>, <code>background</code>, <code>bg</code>, <code>b</code>, <code>foreground-rgb</code>,
+<code>fg-rgb</code>, <code>f-rgb</code>, <code>background-rgb</code>, <code>bg-rgb</code> or <code>b-rgb</code>. Without rbg a color value
+is name from an allowable colors <code>black</code>, <code>red</code>, <code>green</code>, <code>yellow</code>, <code>blue</code>, <code>magenta</code>,
+<code>cyan</code> or <code>white</code>. Colors have their short formats <code>k</code>, <code>r</code>, <code>g</code>, <code>y</code>, <code>b</code>, <code>m</code>, <code>c</code> and <code>w</code>
+respectively. If color is prefixed with either <code>!</code> or <code>bright-</code>, bright mode is automatically
+applied. Prefixing with <code>~</code> will resolve from JLine internal bsd color table.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>If rgb format is expected and prefixed with either <code>x</code> or <code>#</code> a normal
+hex format is used.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">fg-red
+fg-r
+fg-rgb:red
+fg-rgb:xff3333
+fg-rgb:#ff3333</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>If spec contains special names <code>default</code>, <code>bold</code>, <code>faint</code>, <code>italic</code>, <code>underline</code>, <code>blink</code>,
+<code>inverse</code>, <code>inverse-neg</code>, <code>inverseneg</code>, <code>conceal</code>, <code>crossed-out</code>, <code>crossedout</code> or <code>hidden</code>
+a style is changed accordingly with an existing color.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">bold
+bold,fg:red</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<p>If spec is a number or numbers separated with semicolon, format is a plain part of an ansi
+ascii codes.</p>
 </div>
-<div class="section-summary">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">31
+31;1</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+JLine special mapping format which would resolve spec starting with dot can&#8217;t be
+used as we don&#8217;t yet map those into Spring Shell styling names.
+</td>
+</tr>
+</table>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="appendices-techical-intro-commandcatalog.html">Command Catalog</a></span>
+  <span class="next"><a href="appendices-techical-intro-searchalgorithm.html">Search Algorithms</a></span>
 </nav>
 </article>
 </div>  </div>

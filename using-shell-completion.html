@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Completion :: Spring Shell</title>
+    <link rel="prev" href="using-shell-options-naming.html">
+    <link rel="next" href="using-shell-building.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -411,7 +412,7 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="using-shell-completion.html">Completion</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Completion"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-completion.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,126 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-completion.html">Completion</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Completion</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>Spring Shell can provide completion proposals for both interactive shell
+and a command-line. There are differences however as when shell is in
+interactive mode we have an active instance of a shell meaning it&#8217;s
+easier to provide more programmatic ways to provide completion hints.
+When shell is purely run as a command-line tool a completion can only
+be accomplished with integration into OS level shell&#8217;s like <em>bash</em>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="interactive"><a class="anchor" href="#interactive"></a>Interactive</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Hints for completions are calculated with <em>function</em> or <em>interface</em> style
+methods which takes <code>CompletionContext</code> and returns a list of
+<code>CompletionProposal</code> instances. <code>CompletionContext</code> gives you various
+information about a current context like command registration and option.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Generic resolvers can be registered as a beans if those are useful
+for all commands and scenarious. For example existing completion
+implementation <code>RegistrationOptionsCompletionResolver</code> handles completions
+for a option names.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">static class MyValuesCompletionResolver implements CompletionResolver {
+
+	@Override
+	public List&lt;CompletionProposal&gt; apply(CompletionContext t) {
+		return Arrays.asList("val1", "val2").stream()
+			.map(CompletionProposal::new)
+			.collect(Collectors.toList());
+	}
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>Option values with builder based command registration can be
+defined per option.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">void dump1() {
+	CommandRegistration.builder()
+		.withOption()
+			.longNames("arg1")
+			.completion(ctx -&gt; {
+				return Arrays.asList("val1", "val2").stream()
+					.map(CompletionProposal::new)
+					.collect(Collectors.toList());
+			})
+			.and()
+		.build();
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>Option values with annotation based command registration are handled
+via <code>ValueProvider</code> interface which can be defined with <code>@ShellOption</code>
+annotation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">static class MyValuesProvider implements ValueProvider {
+
+	@Override
+	public List&lt;CompletionProposal&gt; complete(CompletionContext completionContext) {
+		return Arrays.asList("val1", "val2").stream()
+			.map(CompletionProposal::new)
+			.collect(Collectors.toList());
+	}
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>Actual <code>ValueProvider</code> with annotation based command needs to be
+registered as a <em>Bean</em>.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ShellMethod(value = "complete", key = "complete")
+public String complete(
+	@ShellOption(valueProvider = MyValuesProvider.class) String arg1)
+{
+	return "You said " + arg1;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="command-line"><a class="anchor" href="#command-line"></a>Command-Line</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>Command-line completion currently only support <em>bash</em> and is documented
+in a built-in <code>completion</code> command <a href="using-shell-commands-builtin-completion.html" class="xref page">Completion</a>.</p>
 </div>
-<div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
 </div>
-<div class="section-summary">
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-options-naming.html">Naming</a></span>
+  <span class="next"><a href="using-shell-building.html">Building</a></span>
 </nav>
 </article>
 </div>  </div>

@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>@ExceptionResolver :: Spring Shell</title>
+    <link rel="prev" href="using-shell-commands-exceptionhandling-mappings.html">
+    <link rel="next" href="using-shell-commands-hidden.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -314,7 +315,7 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="using-shell-commands-exceptionhandling-mappings.html">Exit Code Mappings</a>
   </li>
-  <li class="nav-item" data-depth="3">
+  <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="using-shell-commands-exceptionhandling-annotation.html">@ExceptionResolver</a>
   </li>
 </ul>
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="@ExceptionResolver"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-commands-exceptionhandling-annotation.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,153 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-commands.html">Commands</a></li>
+    <li><a href="using-shell-commands-exceptionhandling.html">Exception Handling</a></li>
+    <li><a href="using-shell-commands-exceptionhandling-annotation.html">@ExceptionResolver</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">@ExceptionResolver</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p><code>@ShellComponent</code> classes can have <code>@ExceptionResolver</code> methods to handle exceptions from component
+methods. These are meant for annotated methods.</p>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>The exception may match against a top-level exception being propagated (e.g. a direct IOException
+being thrown) or against a nested cause within a wrapper exception (e.g. an IOException wrapped
+inside an IllegalStateException). This can match at arbitrary cause levels.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>For matching exception types, preferably declare the target exception as a method argument, as
+the preceding example(s) shows. When multiple exception methods match, a root exception match is
+generally preferred to a cause exception match. More specifically, the ExceptionDepthComparator
+is used to sort exceptions based on their depth from the thrown exception type.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>Alternatively, the annotation declaration may narrow the exception types to match, as the
+following example shows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ExceptionResolver({ RuntimeException.class })
+CommandHandlingResult errorHandler(Exception e) {
+	// Exception would be type of RuntimeException,
+	// optionally do something with it
+	return CommandHandlingResult.of("Hi, handled exception\n", 42);
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ExceptionResolver
+CommandHandlingResult errorHandler(RuntimeException e) {
+	return CommandHandlingResult.of("Hi, handled custom exception\n", 42);
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p><code>@ExceptionResolver</code> can also return <code>String</code> which is used as an output to console. You can
+use <code>@ExitCode</code> annotation to define return code.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ExceptionResolver
+@ExitCode(code = 5)
+String errorHandler(Exception e) {
+	return "Hi, handled exception";
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<p><code>@ExceptionResolver</code> with <code>void</code> return type is automatically handled as handled exception.
+You can then also define <code>@ExitCode</code> and use <code>Terminal</code> if you need to write something
+into console.</p>
 </div>
-<div class="section-summary">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ExceptionResolver
+@ExitCode(code = 5)
+void errorHandler(Exception e, Terminal terminal) {
+	PrintWriter writer = terminal.writer();
+	String msg =  "Hi, handled exception " + e.toString();
+	writer.println(msg);
+	writer.flush();
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="method-arguments"><a class="anchor" href="#method-arguments"></a>Method Arguments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>@ExceptionResolver</code> methods support the following arguments:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Method argument</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exception type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For access to the raised exception. This is any type of <code>Exception</code> or <code>Throwable</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Terminal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For access to underlying <code>JLine</code> terminal to i.e. get its terminal writer.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="return-values"><a class="anchor" href="#return-values"></a>Return Values</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>@ExceptionResolver</code> methods support the following return values:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Return value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Plain text to return to a shell. Exit code 1 is used in this case.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CommandHandlingResult</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Plain <code>CommandHandlingResult</code> having message and exit code.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">void</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A method with a void return type is considered to have fully handled the exception. Usually
+you would define <code>Terminal</code> as a method argument and write response using <em>terminal writer</em>
+from it. As exception is fully handled, Exit code 0 is used in this case.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-commands-exceptionhandling-mappings.html">Exit Code Mappings</a></span>
+  <span class="next"><a href="using-shell-commands-hidden.html">Hidden Command</a></span>
 </nav>
 </article>
 </div>  </div>

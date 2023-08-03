@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Execution :: Spring Shell</title>
+    <link rel="prev" href="using-shell-customization-singlecommand.html">
+    <link rel="next" href="using-shell-testing.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -492,7 +493,7 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="using-shell-execution.html">Execution</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Execution"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-execution.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,61 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-execution.html">Execution</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Execution</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>This section describes how to set up a Spring Shell to work in interactive mode.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-shell-execution-interactionmode"><a class="anchor" href="#using-shell-execution-interactionmode"></a>Interaction Mode</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Version 2.1.x introduced built-in support to distinguish between interactive
+and non-interactive modes. This makes it easier to use the shell as a
+simple command-line tool without requiring customization.</p>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>Currently, interactive mode is entered if any command line options are passed when starting
+or running a shell from a command line. This works especially well when a shell application
+is compiled with <a href="using-shell-building.html#native" class="xref page">Native Support</a>.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>Some commands may not have any useful meanings when they run in interactive mode
+or (conversely) in non-interactive mode. For example, a built-in <code>exit</code> command would
+have no meaning in non-interactive mode, because it is used to exit interactive mode.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>The <code>@ShellMethod</code> annotation has a field called <code>interactionMode</code> that you can use to inform
+shell about when a particular command is available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-shell-execution-shellrunner"><a class="anchor" href="#using-shell-execution-shellrunner"></a>Shell Runners</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>ShellApplicationRunner</code> is a main interface where Boot&#8217;s <code>ApplicationArguments</code> are passed
+and its default implementation makes a choice which <code>ShellRunner</code> is used. There can be
+only one <code>ShellApplicationRunner</code> but it can be redefined if needed for some reason.</p>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>Three <code>ShellRunner</code> implementation exists, named <code>InteractiveShellRunner</code>,
+<code>NonInteractiveShellRunner</code> and <code>ScriptShellRunner</code>. These are enabled on default but
+can be disable if needed using properties <code>spring.shell.interactive.enabled</code>,
+<code>spring.shell.noninteractive.enabled</code> and <code>spring.shell.script.enabled</code> respecively.</p>
 </div>
-<div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
 </div>
-<div class="section-summary">
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-customization-singlecommand.html">Single Command</a></span>
+  <span class="next"><a href="using-shell-testing.html">Testing</a></span>
 </nav>
 </article>
 </div>  </div>

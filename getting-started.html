@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Getting Started :: Spring Shell</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="using-shell-basics.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,10 +268,10 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="getting-started.html">Getting Started</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Getting Started"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/getting-started.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,213 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="getting-started.html">Getting Started</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Getting Started</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>To see what Spring Shell has to offer, we can write a trivial <em>hello world</em>
+shell application that has a simple argument.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<em>Spring Shell</em> is based on <em>Spring Boot</em> 3.2.0-M1 and
+<em>Spring Framework</em> 6.1.0-M3 and thus requires <em>JDK 17</em>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-a-project"><a class="anchor" href="#creating-a-project"></a>Creating a Project</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For the purpose of this tutorial, we create a simple Spring Boot application by
+using <a href="https://start.spring.io" class="bare">start.spring.io</a> where you can choose <em>Spring Shell</em> dependency.
+This minimal application depends only on <code>spring-boot-starter</code> and
+<code>spring-shell-starter</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<em>Spring Shell</em> version on <code>start.spring.io</code> is usually latest release.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>With <em>maven</em> you&#8217;re expected to have something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;properties&gt;
+    &lt;spring-shell.version&gt;3.2.0-SNAPSHOT&lt;/spring-shell.version&gt;
+&lt;/properties&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-shell-starter&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.shell&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-shell-dependencies&lt;/artifactId&gt;
+            &lt;version&gt;${spring-shell.version}&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>With <em>gradle</em> you&#8217;re expected to have something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.shell:spring-shell-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.shell:spring-shell-dependencies:3.2.0-SNAPSHOT"
+    }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+Given that Spring Shell starts the REPL (Read-Eval-Print-Loop) because this
+dependency is present, you need to either skip tests when you build (<code>-DskipTests</code>)
+throughout this tutorial or remove the sample integration test that was generated
+by <a href="https://start.spring.io" class="bare">start.spring.io</a>. If you do not remove it, the integration test creates
+the Spring <code>ApplicationContext</code> and, depending on your build tool, stays stuck in
+the eval loop or crashes with a NPE.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>Once compiled it can be run either in interactive mode:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text"></code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>Or in non-interactive mode:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text"></code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Check out <a href="using-shell-customization-logging.html" class="xref page">Logging</a> making logging to work
+better with shell apps.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-spring-shell-your-first-command"><a class="anchor" href="#using-spring-shell-your-first-command"></a>Your First Command</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now we can add our first command. To do so, create a new class (named whatever you want) and
+annotate it with <code>@ShellComponent</code> which is a variation of <code>@Component</code> that is used to restrict
+the set of classes that are scanned for candidate commands.</p>
 </div>
 <div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<p>Then we can create a <code>helloWorld</code> method that takes <code>String</code> as an argument and
+returns it with "Hello world". Add <code>@ShellMethod</code> and optionally change command name
+using <code>key</code> parameter. You can use <code>@ShellOption</code> to define argument default value
+if it&#8217;s not given when running a command.</p>
 </div>
-<div class="section-summary">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"><span class="fold-block is-hidden-folded">import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
+
+</span><span class="fold-block">@ShellComponent
+public class MyCommands {
+
+	@ShellMethod(key = "hello-world")
+	public String helloWorld(
+		@ShellOption(defaultValue = "spring") String arg
+	) {
+		return "Hello world " + arg;
+	}
+}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>New <em>hello-world</em> command becomes visible to <em>help</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">My Commands
+       hello-world:</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And you can run it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">shell:&gt;hello-world
+Hello world spring
+
+shell:&gt;hello-world --arg boot
+Hello world boot</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The rest of this document delves deeper into the whole Spring Shell programming model.</p>
+</div>
+</div>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="index.html">Overview</a></span>
+  <span class="next"><a href="using-shell-basics.html">Basics</a></span>
 </nav>
 </article>
 </div>  </div>

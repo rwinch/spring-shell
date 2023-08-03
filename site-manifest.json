@@ -1,0 +1,445 @@
+{
+  "$id": "https://schemas.antora.org/site-manifest/1-0-0/draft-01",
+  "generated": "2023-08-03T19:52:46.487Z",
+  "url": "https://rwinch.github.io/spring-shell",
+  "components": {
+    "shell": {
+      "title": "Spring Shell Documentation",
+      "latest": "3.2.0",
+      "versions": {
+        "3.2.0": {
+          "prerelease": true,
+          "displayVersion": "3.2.0-SNAPSHOT",
+          "url": "/index.html",
+          "pages": [
+            {
+              "path": "index.adoc",
+              "url": "/index.html",
+              "title": "Spring Shell"
+            },
+            {
+              "path": "appendices-debugging.adoc",
+              "url": "/appendices-debugging.html",
+              "title": "Debugging"
+            },
+            {
+              "path": "appendices-techical-intro-commandcatalog.adoc",
+              "url": "/appendices-techical-intro-commandcatalog.html",
+              "title": "Command Catalog"
+            },
+            {
+              "path": "appendices-techical-intro-commandcontext.adoc",
+              "url": "/appendices-techical-intro-commandcontext.html",
+              "title": "Command Context"
+            },
+            {
+              "path": "appendices-techical-intro-execution.adoc",
+              "url": "/appendices-techical-intro-execution.html",
+              "title": "Command Execution"
+            },
+            {
+              "path": "appendices-techical-intro-parser.adoc",
+              "url": "/appendices-techical-intro-parser.html",
+              "title": "Command Parser"
+            },
+            {
+              "path": "appendices-techical-intro-registration.adoc",
+              "url": "/appendices-techical-intro-registration.html",
+              "title": "Command Registration"
+            },
+            {
+              "path": "appendices-techical-intro-searchalgorithm.adoc",
+              "url": "/appendices-techical-intro-searchalgorithm.html",
+              "title": "Search Algorithms"
+            },
+            {
+              "path": "appendices-techical-intro-theming.adoc",
+              "url": "/appendices-techical-intro-theming.html",
+              "title": "Theming"
+            },
+            {
+              "path": "appendices-techical-intro.adoc",
+              "url": "/appendices-techical-intro.html",
+              "title": "Techical Introduction"
+            },
+            {
+              "path": "appendices-tui-catalog.adoc",
+              "url": "/appendices-tui-catalog.html",
+              "title": "Catalog App"
+            },
+            {
+              "path": "appendices-tui-control.adoc",
+              "url": "/appendices-tui-control.html",
+              "title": "Control"
+            },
+            {
+              "path": "appendices-tui-eventloop.adoc",
+              "url": "/appendices-tui-eventloop.html",
+              "title": "EventLoop"
+            },
+            {
+              "path": "appendices-tui-keyhandling.adoc",
+              "url": "/appendices-tui-keyhandling.html",
+              "title": "Key Handling"
+            },
+            {
+              "path": "appendices-tui-mousehandling.adoc",
+              "url": "/appendices-tui-mousehandling.html",
+              "title": "Mouse Handling"
+            },
+            {
+              "path": "appendices-tui-screen.adoc",
+              "url": "/appendices-tui-screen.html",
+              "title": "Screen"
+            },
+            {
+              "path": "appendices-tui-view.adoc",
+              "url": "/appendices-tui-view.html",
+              "title": "View"
+            },
+            {
+              "path": "appendices-tui.adoc",
+              "url": "/appendices-tui.html",
+              "title": "Terminal UI"
+            },
+            {
+              "path": "getting-started.adoc",
+              "url": "/getting-started.html",
+              "title": "Getting Started"
+            },
+            {
+              "path": "using-shell-basics-reading.adoc",
+              "url": "/using-shell-basics-reading.html",
+              "title": "Reading Docs"
+            },
+            {
+              "path": "using-shell-basics.adoc",
+              "url": "/using-shell-basics.html",
+              "title": "Basics"
+            },
+            {
+              "path": "using-shell-building.adoc",
+              "url": "/using-shell-building.html",
+              "title": "Building"
+            },
+            {
+              "path": "using-shell-commands-availability.adoc",
+              "url": "/using-shell-commands-availability.html",
+              "title": "Dynamic Command Availability"
+            },
+            {
+              "path": "using-shell-commands-builtin-clear.adoc",
+              "url": "/using-shell-commands-builtin-clear.html",
+              "title": "Clear"
+            },
+            {
+              "path": "using-shell-commands-builtin-completion.adoc",
+              "url": "/using-shell-commands-builtin-completion.html",
+              "title": "Completion"
+            },
+            {
+              "path": "using-shell-commands-builtin-exit.adoc",
+              "url": "/using-shell-commands-builtin-exit.html",
+              "title": "Exit"
+            },
+            {
+              "path": "using-shell-commands-builtin-help.adoc",
+              "url": "/using-shell-commands-builtin-help.html",
+              "title": "Help"
+            },
+            {
+              "path": "using-shell-commands-builtin-history.adoc",
+              "url": "/using-shell-commands-builtin-history.html",
+              "title": "History"
+            },
+            {
+              "path": "using-shell-commands-builtin-script.adoc",
+              "url": "/using-shell-commands-builtin-script.html",
+              "title": "Script"
+            },
+            {
+              "path": "using-shell-commands-builtin-stacktrace.adoc",
+              "url": "/using-shell-commands-builtin-stacktrace.html",
+              "title": "Stacktrace"
+            },
+            {
+              "path": "using-shell-commands-builtin-version.adoc",
+              "url": "/using-shell-commands-builtin-version.html",
+              "title": "Version"
+            },
+            {
+              "path": "using-shell-commands-builtin.adoc",
+              "url": "/using-shell-commands-builtin.html",
+              "title": "Built-In Commands"
+            },
+            {
+              "path": "using-shell-commands-exceptionhandling-annotation.adoc",
+              "url": "/using-shell-commands-exceptionhandling-annotation.html",
+              "title": "@ExceptionResolver"
+            },
+            {
+              "path": "using-shell-commands-exceptionhandling-mappings.adoc",
+              "url": "/using-shell-commands-exceptionhandling-mappings.html",
+              "title": "Exit Code Mappings"
+            },
+            {
+              "path": "using-shell-commands-exceptionhandling-resolving.adoc",
+              "url": "/using-shell-commands-exceptionhandling-resolving.html",
+              "title": "Exception Resolving"
+            },
+            {
+              "path": "using-shell-commands-exceptionhandling.adoc",
+              "url": "/using-shell-commands-exceptionhandling.html",
+              "title": "Exception Handling"
+            },
+            {
+              "path": "using-shell-commands-helpoptions.adoc",
+              "url": "/using-shell-commands-helpoptions.html",
+              "title": "Help Options"
+            },
+            {
+              "path": "using-shell-commands-hidden.adoc",
+              "url": "/using-shell-commands-hidden.html",
+              "title": "Hidden Command"
+            },
+            {
+              "path": "using-shell-commands-interactionmode.adoc",
+              "url": "/using-shell-commands-interactionmode.html",
+              "title": "Interaction Mode"
+            },
+            {
+              "path": "using-shell-commands-organize.adoc",
+              "url": "/using-shell-commands-organize.html",
+              "title": "Organizing Commands"
+            },
+            {
+              "path": "using-shell-commands-registration-annotation.adoc",
+              "url": "/using-shell-commands-registration-annotation.html",
+              "title": "Annotation"
+            },
+            {
+              "path": "using-shell-commands-registration-legacyannotation.adoc",
+              "url": "/using-shell-commands-registration-legacyannotation.html",
+              "title": "Legacy Annotation"
+            },
+            {
+              "path": "using-shell-commands-registration-programmatic.adoc",
+              "url": "/using-shell-commands-registration-programmatic.html",
+              "title": "Programmatic"
+            },
+            {
+              "path": "using-shell-commands-registration.adoc",
+              "url": "/using-shell-commands-registration.html",
+              "title": "Registration"
+            },
+            {
+              "path": "using-shell-commands-writing.adoc",
+              "url": "/using-shell-commands-writing.html",
+              "title": "Writing"
+            },
+            {
+              "path": "using-shell-commands.adoc",
+              "url": "/using-shell-commands.html",
+              "title": "Commands"
+            },
+            {
+              "path": "using-shell-completion.adoc",
+              "url": "/using-shell-completion.html",
+              "title": "Completion"
+            },
+            {
+              "path": "using-shell-components-flow.adoc",
+              "url": "/using-shell-components-flow.html",
+              "title": "Flow"
+            },
+            {
+              "path": "using-shell-components-ui-confirmation.adoc",
+              "url": "/using-shell-components-ui-confirmation.html",
+              "title": "Confirmation"
+            },
+            {
+              "path": "using-shell-components-ui-multiselect.adoc",
+              "url": "/using-shell-components-ui-multiselect.html",
+              "title": "Multi Select"
+            },
+            {
+              "path": "using-shell-components-ui-pathinput.adoc",
+              "url": "/using-shell-components-ui-pathinput.html",
+              "title": "Path Input"
+            },
+            {
+              "path": "using-shell-components-ui-pathsearch.adoc",
+              "url": "/using-shell-components-ui-pathsearch.html",
+              "title": "Path Search"
+            },
+            {
+              "path": "using-shell-components-ui-render.adoc",
+              "url": "/using-shell-components-ui-render.html",
+              "title": "Component Render"
+            },
+            {
+              "path": "using-shell-components-ui-singleselect.adoc",
+              "url": "/using-shell-components-ui-singleselect.html",
+              "title": "Single Select"
+            },
+            {
+              "path": "using-shell-components-ui-stringinput.adoc",
+              "url": "/using-shell-components-ui-stringinput.html",
+              "title": "String Input"
+            },
+            {
+              "path": "using-shell-components-ui.adoc",
+              "url": "/using-shell-components-ui.html",
+              "title": "Flow Components"
+            },
+            {
+              "path": "using-shell-components.adoc",
+              "url": "/using-shell-components.html",
+              "title": "Components"
+            },
+            {
+              "path": "using-shell-customization-commandnotfound.adoc",
+              "url": "/using-shell-customization-commandnotfound.html",
+              "title": "Command Not Found"
+            },
+            {
+              "path": "using-shell-customization-logging.adoc",
+              "url": "/using-shell-customization-logging.html",
+              "title": "Logging"
+            },
+            {
+              "path": "using-shell-customization-singlecommand.adoc",
+              "url": "/using-shell-customization-singlecommand.html",
+              "title": "Single Command"
+            },
+            {
+              "path": "using-shell-customization-styling.adoc",
+              "url": "/using-shell-customization-styling.html",
+              "title": "Theming"
+            },
+            {
+              "path": "using-shell-customization.adoc",
+              "url": "/using-shell-customization.html",
+              "title": "Customization"
+            },
+            {
+              "path": "using-shell-execution.adoc",
+              "url": "/using-shell-execution.html",
+              "title": "Execution"
+            },
+            {
+              "path": "using-shell-options-arity.adoc",
+              "url": "/using-shell-options-arity.html",
+              "title": "Arity"
+            },
+            {
+              "path": "using-shell-options-basics-annotation.adoc",
+              "url": "/using-shell-options-basics-annotation.html",
+              "title": "Annotation"
+            },
+            {
+              "path": "using-shell-options-basics-legacyannotation.adoc",
+              "url": "/using-shell-options-basics-legacyannotation.html",
+              "title": "Legacy Annotation"
+            },
+            {
+              "path": "using-shell-options-basics-programmatic.adoc",
+              "url": "/using-shell-options-basics-programmatic.html",
+              "title": "Programmatic"
+            },
+            {
+              "path": "using-shell-options-basics.adoc",
+              "url": "/using-shell-options-basics.html",
+              "title": "Basics"
+            },
+            {
+              "path": "using-shell-options-default.adoc",
+              "url": "/using-shell-options-default.html",
+              "title": "Default Value"
+            },
+            {
+              "path": "using-shell-options-label.adoc",
+              "url": "/using-shell-options-label.html",
+              "title": "Label"
+            },
+            {
+              "path": "using-shell-options-naming.adoc",
+              "url": "/using-shell-options-naming.html",
+              "title": "Naming"
+            },
+            {
+              "path": "using-shell-options-optional.adoc",
+              "url": "/using-shell-options-optional.html",
+              "title": "Optional Value"
+            },
+            {
+              "path": "using-shell-options-positional.adoc",
+              "url": "/using-shell-options-positional.html",
+              "title": "Positional"
+            },
+            {
+              "path": "using-shell-options-short.adoc",
+              "url": "/using-shell-options-short.html",
+              "title": "Short Format"
+            },
+            {
+              "path": "using-shell-options-types.adoc",
+              "url": "/using-shell-options-types.html",
+              "title": "Types"
+            },
+            {
+              "path": "using-shell-options-validation.adoc",
+              "url": "/using-shell-options-validation.html",
+              "title": "Validation"
+            },
+            {
+              "path": "using-shell-options.adoc",
+              "url": "/using-shell-options.html",
+              "title": "Options"
+            },
+            {
+              "path": "using-shell-testing-basics.adoc",
+              "url": "/using-shell-testing-basics.html",
+              "title": "Basics"
+            },
+            {
+              "path": "using-shell-testing-settings.adoc",
+              "url": "/using-shell-testing-settings.html",
+              "title": "Settings"
+            },
+            {
+              "path": "using-shell-testing.adoc",
+              "url": "/using-shell-testing.html",
+              "title": "Testing"
+            },
+            {
+              "path": "using-shell-tui-intro.adoc",
+              "url": "/using-shell-tui-intro.html",
+              "title": "Introduction"
+            },
+            {
+              "path": "using-shell-tui-views-box.adoc",
+              "url": "/using-shell-tui-views-box.html",
+              "title": "BoxView"
+            },
+            {
+              "path": "using-shell-tui-views-list.adoc",
+              "url": "/using-shell-tui-views-list.html",
+              "title": "ListView"
+            },
+            {
+              "path": "using-shell-tui-views.adoc",
+              "url": "/using-shell-tui-views.html",
+              "title": "Views"
+            },
+            {
+              "path": "using-shell-tui.adoc",
+              "url": "/using-shell-tui.html",
+              "title": "Terminal UI"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

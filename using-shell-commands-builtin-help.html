@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Help :: Spring Shell</title>
+    <link rel="prev" href="using-shell-commands-builtin.html">
+    <link rel="next" href="using-shell-commands-builtin-clear.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -332,7 +333,7 @@
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="using-shell-commands-builtin.html">Built-In Commands</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
+  <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="using-shell-commands-builtin-help.html">Help</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Help"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-commands-builtin-help.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,260 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-commands.html">Commands</a></li>
+    <li><a href="using-shell-commands-builtin.html">Built-In Commands</a></li>
+    <li><a href="using-shell-commands-builtin-help.html">Help</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Help</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
-</div>
-<div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
-</div>
-<div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>Running a shell application often implies that the user is in a graphically limited
+environment. Also, while we are nearly always connected in the era of mobile phones,
+accessing a web browser or any other rich UI application (such as a PDF viewer) may not always
+be possible. This is why it is important that the shell commands are correctly self-documented, and this is where the <code>help</code>
+command comes in.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>Typing <code>help</code> + <code>ENTER</code> lists all the commands known to the shell (including <a href="using-shell-commands-availability.html" class="xref page">unavailable</a> commands)
+and a short description of what they do, similar to the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">my-shell:&gt;help
+AVAILABLE COMMANDS
+
+Built-In Commands
+       exit: Exit the shell.
+       help: Display help about available commands
+       stacktrace: Display the full stacktrace of the last error.
+       clear: Clear the shell screen.
+       quit: Exit the shell.
+       history: Display or save the history of previously run commands
+       completion bash: Generate bash completion script
+       version: Show version info
+       script: Read and execute commands from a file.</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>Typing <code>help &lt;command&gt;</code> shows more detailed information about a command, including the available parameters, their
+type, whether they are mandatory or not, and other details.</p>
 </div>
 <div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<p>The following listing shows the <code>help</code> command applied to itself:</p>
 </div>
-<div class="section-summary">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">my-shell:&gt;help help
+NAME
+       help - Display help about available commands
+
+SYNOPSIS
+       help --command String
+
+OPTIONS
+       --command or -C String
+       The command to obtain help for.
+       [Optional]</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Help is templated and can be customized if needed. Settings are under <code>spring.shell.command.help</code> where you can use
+<code>enabled</code> to disable command, <code>grouping-mode</code> taking <code>group</code> or <code>flat</code> if you want to hide groups by flattening
+a structure, <code>command-template</code> to define your template for output of a command help, <code>commands-template</code> to define
+output of a command list.</p>
+</div>
+<div class="paragraph">
+<p>If <code>spring.shell.command.help.grouping-mode=flat</code> is set, then help would show:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">my-shell:&gt;help help
+AVAILABLE COMMANDS
+
+exit: Exit the shell.
+help: Display help about available commands
+stacktrace: Display the full stacktrace of the last error.
+clear: Clear the shell screen.
+quit: Exit the shell.
+history: Display or save the history of previously run commands
+completion bash: Generate bash completion script
+version: Show version info
+script: Read and execute commands from a file.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Output from <code>help</code> and <code>help &lt;commmand&gt;</code> are both templated with a default implementation
+which can be changed.</p>
+</div>
+<div class="paragraph">
+<p>Option <code>spring.shell.command.help.commands-template</code> defaults to
+<code>classpath:template/help-commands-default.stg</code> and is passed <code>GroupsInfoModel</code>
+as a model.</p>
+</div>
+<div class="paragraph">
+<p>Option <code>spring.shell.command.help.command-template</code> defaults to
+<code>classpath:template/help-command-default.stg</code> and is passed <code>CommandInfoModel</code>
+as a model.</p>
+</div>
+<table id="groupsinfomodel-variables" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. GroupsInfoModel Variables</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>showGroups</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> if showing groups is enabled. Otherwise, false.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>groups</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The commands variables (see <a href="#groupcommandinfomodel-variables">GroupCommandInfoModel Variables</a>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>commands</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The commands variables (see <a href="#commandinfomodel-variables">CommandInfoModel Variables</a>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasUnavailableCommands</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> if there is unavailable commands. Otherwise, false.</p></td>
+</tr>
+</tbody>
+</table>
+<table id="groupcommandinfomodel-variables" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. GroupCommandInfoModel Variables</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>group</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of a group, if set. Otherwise, empty.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>commands</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The commands, if set. Otherwise, empty. Type is a multi value, see <a href="#commandinfomodel-variables">CommandInfoModel Variables</a>.</p></td>
+</tr>
+</tbody>
+</table>
+<table id="commandinfomodel-variables" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. CommandInfoModel Variables</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of a command, if set. Otherwise, null. Type is string and contains full command.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>names</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The names of a command, if set. Otherwise, null. Type is multi value essentially <code>name</code> splitted.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>aliases</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The possible aliases, if set. Type is multi value with strings.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The description of a command, if set. Otherwise, null.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>parameters</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The parameters variables, if set. Otherwise empty. Type is a multi value, see <a href="#commandparameterinfomodel-variables">CommandParameterInfoModel Variables</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>availability</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The availability variables (see <a href="#commandavailabilityinfomodel-variables">CommandAvailabilityInfoModel Variables</a>).</p></td>
+</tr>
+</tbody>
+</table>
+<table id="commandparameterinfomodel-variables" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. CommandParameterInfoModel Variables</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The type of a parameter if set. Otherwise, null.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>arguments</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The arguments, if set. Otherwise, null. Type is multi value with strings.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>required</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> if required. Otherwise, false.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The description of a parameter, if set. Otherwise, null.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>defaultValue</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The default value of a parameter, if set. Otherwise, null.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hasDefaultValue</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> if defaultValue exists. Otherwise, false.</p></td>
+</tr>
+</tbody>
+</table>
+<table id="commandavailabilityinfomodel-variables" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. CommandAvailabilityInfoModel Variables</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>available</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> if available. Otherwise, false.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>reason</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The reason if not available if set. Otherwise, null.</p></td>
+</tr>
+</tbody>
+</table>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-commands-builtin.html">Built-In Commands</a></span>
+  <span class="next"><a href="using-shell-commands-builtin-clear.html">Clear</a></span>
 </nav>
 </article>
 </div>  </div>

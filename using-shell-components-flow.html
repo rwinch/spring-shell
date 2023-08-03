@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Flow :: Spring Shell</title>
+    <link rel="prev" href="using-shell-components.html">
+    <link rel="next" href="using-shell-components-ui.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -421,7 +422,7 @@
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="using-shell-components.html">Components</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="using-shell-components-flow.html">Flow</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Flow"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-components-flow.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,130 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-components.html">Components</a></li>
+    <li><a href="using-shell-components-flow.html">Flow</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Flow</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>When you use <a href="using-shell-components-ui.html" class="xref page">Flow Components</a> to build something that involves
+use of a multiple components, your implementation may become a bit cluttered.
+To ease these use cases, we added a
+<code>ComponentFlow</code> that can hook multiple component executions together
+as a &#8220;flow&#8221;.</p>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>The following listings show examples of flows and their output in a shell:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">static class FlowSampleComplex {
+
+	@Autowired
+	private ComponentFlow.Builder componentFlowBuilder;
+
+	public void runFlow() {
+		Map&lt;String, String&gt; single1SelectItems = new HashMap&lt;&gt;();
+		single1SelectItems.put("key1", "value1");
+		single1SelectItems.put("key2", "value2");
+		List&lt;SelectItem&gt; multi1SelectItems = Arrays.asList(SelectItem.of("key1", "value1"),
+				SelectItem.of("key2", "value2"), SelectItem.of("key3", "value3"));
+		ComponentFlow flow = componentFlowBuilder.clone().reset()
+				.withStringInput("field1")
+					.name("Field1")
+					.defaultValue("defaultField1Value")
+					.and()
+				.withStringInput("field2")
+					.name("Field2")
+					.and()
+				.withConfirmationInput("confirmation1")
+					.name("Confirmation1")
+					.and()
+				.withPathInput("path1")
+					.name("Path1")
+					.and()
+				.withSingleItemSelector("single1")
+					.name("Single1")
+					.selectItems(single1SelectItems)
+					.and()
+				.withMultiItemSelector("multi1")
+					.name("Multi1")
+					.selectItems(multi1SelectItems)
+					.and()
+				.build();
+		flow.run();
+	}
+
+}</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/component-flow-showcase-1.svg" alt="text input">
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>Normal execution order of a components is same as defined with a builder. It&#8217;s
+possible to conditionally choose where to jump in a flow by using a <code>next</code>
+function and returning target <em>component id</em>. If this returned id is aither <em>null</em>
+or doesn&#8217;t exist flow is essentially stopped right there.</p>
 </div>
-<div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">static class FlowSampleConditional {
+
+	@Autowired
+	private ComponentFlow.Builder componentFlowBuilder;
+
+	public void runFlow() {
+		Map&lt;String, String&gt; single1SelectItems = new HashMap&lt;&gt;();
+		single1SelectItems.put("Field1", "field1");
+		single1SelectItems.put("Field2", "field2");
+		ComponentFlow flow = componentFlowBuilder.clone().reset()
+				.withSingleItemSelector("single1")
+					.name("Single1")
+					.selectItems(single1SelectItems)
+					.next(ctx -&gt; ctx.getResultItem().get().getItem())
+					.and()
+				.withStringInput("field1")
+					.name("Field1")
+					.defaultValue("defaultField1Value")
+					.next(ctx -&gt; null)
+					.and()
+				.withStringInput("field2")
+					.name("Field2")
+					.defaultValue("defaultField2Value")
+					.next(ctx -&gt; null)
+					.and()
+				.build();
+		flow.run();
+	}
+
+}</code></pre>
 </div>
-<div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
 </div>
-<div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/component-flow-conditional-1.svg" alt="text input">
 </div>
-<div class="section-summary">
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The result from running a flow returns <code>ComponentFlowResult</code>, which you can
+use to do further actions.
+</td>
+</tr>
+</table>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-components.html">Components</a></span>
+  <span class="next"><a href="using-shell-components-ui.html">Flow Components</a></span>
 </nav>
 </article>
 </div>  </div>

@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Optional Value :: Spring Shell</title>
+    <link rel="prev" href="using-shell-options-positional.html">
+    <link rel="next" href="using-shell-options-default.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -391,7 +392,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="using-shell-options-positional.html">Positional</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="using-shell-options-optional.html">Optional Value</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Optional Value"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-options-optional.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,129 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-options.html">Options</a></li>
+    <li><a href="using-shell-options-optional.html">Optional Value</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Optional Value</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>An option is either required or not and, generally speaking, how it behaves depends on
+a command target.</p>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>Making option optional.</p>
+</div>
+<div id="_tabs_1" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_1_programmatic" class="tab">
+<p>Programmatic</p>
+</li>
+<li id="_tabs_1_annotation" class="tab">
+<p>Annotation</p>
+</li>
+<li id="_tabs_1_legacy_annotation" class="tab">
+<p>Legacy Annotation</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_1_programmatic--panel" class="tabpanel" aria-labelledby="_tabs_1_programmatic">
+<div class="listingblock primary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration optionalOption() {
+	return CommandRegistration.builder()
+		.command("optionalOption")
+		.withOption()
+			.longNames("arg")
+			.required(false)
+			.and()
+		.build();
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_1_annotation--panel" class="tabpanel" aria-labelledby="_tabs_1_annotation">
+<div class="listingblock secondary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">void optionalOption(
+	@Option(required = false) String arg
+) {
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_1_legacy_annotation--panel" class="tabpanel" aria-labelledby="_tabs_1_legacy_annotation">
+<div class="listingblock secondary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">void optionalOption(
+	@ShellOption(defaultValue = ShellOption.NULL) String arg
+) {
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>Making option mandatory.</p>
 </div>
-<div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<div id="_tabs_2" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_2_programmatic" class="tab">
+<p>Programmatic</p>
+</li>
+<li id="_tabs_2_annotation" class="tab">
+<p>Annotation</p>
+</li>
+<li id="_tabs_2_legacy_annotation" class="tab">
+<p>Legacy Annotation</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<div id="_tabs_2_programmatic--panel" class="tabpanel" aria-labelledby="_tabs_2_programmatic">
+<div class="listingblock primary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CommandRegistration mandatoryOption() {
+	return CommandRegistration.builder()
+		.command("optionalOption")
+		.withOption()
+			.longNames("arg")
+			.required()
+			.and()
+		.build();
+}</code></pre>
 </div>
-<div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
 </div>
-<div class="section-summary">
+</div>
+<div id="_tabs_2_annotation--panel" class="tabpanel" aria-labelledby="_tabs_2_annotation">
+<div class="listingblock secondary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">void mandatoryOption(
+	@Option(required = true) String arg
+) {
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_2_legacy_annotation--panel" class="tabpanel" aria-labelledby="_tabs_2_legacy_annotation">
+<div class="listingblock secondary">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">void mandatoryOption(
+	@ShellOption() String arg
+) {
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-options-positional.html">Positional</a></span>
+  <span class="next"><a href="using-shell-options-default.html">Default Value</a></span>
 </nav>
 </article>
 </div>  </div>

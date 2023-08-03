@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Single Select :: Spring Shell</title>
+    <link rel="prev" href="using-shell-components-ui-confirmation.html">
+    <link rel="next" href="using-shell-components-ui-multiselect.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -443,7 +444,7 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="using-shell-components-ui-confirmation.html">Confirmation</a>
   </li>
-  <li class="nav-item" data-depth="3">
+  <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="using-shell-components-ui-singleselect.html">Single Select</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Single Select"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/using-shell-components-ui-singleselect.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,95 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li><a href="using-shell-components.html">Components</a></li>
+    <li><a href="using-shell-components-ui.html">Flow Components</a></li>
+    <li><a href="using-shell-components-ui-singleselect.html">Single Select</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Single Select</h1>
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p>A single select component asks a user to choose one item from a list. It is similar to a simple
+dropbox implementation. The following listing shows an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ShellComponent
+public class ComponentCommands extends AbstractShellComponent {
+
+	@ShellMethod(key = "component single", value = "Single selector", group = "Components")
+	public String singleSelector() {
+		SelectorItem&lt;String&gt; i1 = SelectorItem.of("key1", "value1");
+		SelectorItem&lt;String&gt; i2 = SelectorItem.of("key2", "value2");
+		List&lt;SelectorItem&lt;String&gt;&gt; items = Arrays.asList(i1, i2);
+		SingleItemSelector&lt;String, SelectorItem&lt;String&gt;&gt; component = new SingleItemSelector&lt;&gt;(getTerminal(),
+				items, "testSimple", null);
+		component.setResourceLoader(getResourceLoader());
+		component.setTemplateExecutor(getTemplateExecutor());
+		SingleItemSelectorContext&lt;String, SelectorItem&lt;String&gt;&gt; context = component
+				.run(SingleItemSelectorContext.empty());
+		String result = context.getResultItem().flatMap(si -&gt; Optional.ofNullable(si.getItem())).get();
+		return "Got value " + result;
+	}
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p>The following image shows typical output for a single select component:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/component-single-select-1.svg" alt="text input">
+</div>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>The context object is <code>SingleItemSelectorContext</code>. The following table describes its context variables:</p>
 </div>
+<table id="singleitemselectorcontext-template-variables" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. SingleItemSelectorContext Template Variables</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The returned value when the component exists.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rows</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The visible items, where rows contains maps of name and selected items.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>model</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The parent context variables (see <a href="using-shell-components-ui-render.html#selectorcomponentcontext-template-variables" class="xref page">SelectorComponentContext Template Variables</a>).</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p>You can pre-select an item by defining it to get exposed. This is
+useful if you know the default and lets the user merely press <code>Enter</code> to make a choice.
+The following listing sets a default:</p>
 </div>
-<div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">SelectorItem&lt;String&gt; i1 = SelectorItem.of("key1", "value1");
+SelectorItem&lt;String&gt; i2 = SelectorItem.of("key2", "value2");
+List&lt;SelectorItem&lt;String&gt;&gt; items = Arrays.asList(i1, i2);
+SingleItemSelector&lt;String, SelectorItem&lt;String&gt;&gt; component = new SingleItemSelector&lt;&gt;(getTerminal(),
+		items, "testSimple", null);
+component.setDefaultExpose(i2);</code></pre>
 </div>
-<div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
-</div>
-<div class="section-summary">
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="using-shell-components-ui-confirmation.html">Confirmation</a></span>
+  <span class="next"><a href="using-shell-components-ui-multiselect.html">Multi Select</a></span>
 </nav>
 </article>
 </div>  </div>

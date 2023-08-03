@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Shell :: Spring Shell</title>
-    <link rel="next" href="getting-started.html">
+    <title>Search Algorithms :: Spring Shell</title>
+    <link rel="prev" href="appendices-techical-intro-theming.html">
+    <link rel="next" href="appendices-debugging.html">
     <meta name="generator" content="Antora 3.2.0-alpha.2">
     <script>
 !function (theme, navWidth) {
@@ -267,7 +268,7 @@
 </div><ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Overview</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -533,7 +534,7 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="appendices-techical-intro-theming.html">Theming</a>
   </li>
-  <li class="nav-item" data-depth="3">
+  <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="appendices-techical-intro-searchalgorithm.html">Search Algorithms</a>
   </li>
 </ul>
@@ -600,13 +601,13 @@
   <div class="content">
     <div
       class="toc"
-      data-title="Spring Shell"
+      data-title="Search Algorithms"
       data-levels="2"
     >
       <div class="toc-menu"></div>
     </div>
     <div class="sidebar-links">
-        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/index.adoc">
+        <a href="https://github.com/rwinch/spring-shell/edit/main/spring-shell-docs/modules/ROOT/pages/appendices-techical-intro-searchalgorithm.adoc">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -644,36 +645,131 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Spring Shell Documentation</a></li>
-    <li><a href="index.html">Overview</a></li>
+    <li>Appendices</li>
+    <li><a href="appendices-techical-intro.html">Techical Introduction</a></li>
+    <li><a href="appendices-techical-intro-searchalgorithm.html">Search Algorithms</a></li>
   </ul>
 </nav>
 <article>
-<h1 id="page-title" class="page">Spring Shell</h1>
+<h1 id="page-title" class="page">Search Algorithms</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p><strong>3.2.0-SNAPSHOT</strong></p>
+<p><code>SearchMatch</code> is an interface to match <em>text</em> with a <em>pattern</em>. Match
+results are in a returned value <code>SearchMatchResult</code>. Match result
+contains info about match positions and overall score of a match.</p>
 </div>
 <div class="paragraph">
-<p>Not all applications need a fancy web user interface. Sometimes, interacting with an application through an interactive terminal is the most appropriate way to get things done.</p>
+<p><a href="https://github.com/junegunn/fzf">fzf</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementations"><a class="anchor" href="#implementations"></a>Implementations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>FuzzyMatchV2Search</strong></p>
 </div>
 <div class="paragraph">
-<p>Spring Shell lets you create such a runnable application, where the user enters textual commands that are run until the program terminates. The Spring Shell project provides the infrastructure to create such a REPL (Read, Eval, Print Loop) application, letting you concentrate on implementing commands by using the familiar Spring programming model.</p>
+<p>Port of <em>fzf FuzzyMatchV2Search</em> algorithm. Does a fast fuzzy search and is good
+quickly finding paths.</p>
 </div>
 <div class="paragraph">
-<p>Spring Shell includes advanced features (such as parsing, tab completion, colorization of output, fancy ASCII-art table display, input conversion, and validation), freeing you to focus on core command logic.</p>
+<p><strong>ExactMatchNaive</strong></p>
 </div>
 <div class="paragraph">
-<p>&#169; 2017 - 2023 VMware, Inc.</p>
+<p>Port of <em>fzf ExactMatchNaive</em> algorithm. Simple exact match works more accurately
+if you know what to search.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="searchmatch"><a class="anchor" href="#searchmatch"></a>SearchMatch</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Algorithms and default syntax are hidden inside package protected classes
+as we don&#8217;t want to fully open these until we know API&#8217;s are good to go
+for longer support. You need to construct <code>SearchMatch</code> via its
+build-in builder.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">SearchMatch searchMatch = SearchMatch.builder()
+	.caseSensitive(false)
+	.normalize(false)
+	.forward(true)
+	.build();</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p><em>Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.</em></p>
+<p>It&#8217;s possible to configure <em>case sensitivity</em>, on what <em>direction</em> search
+happens or if text should be <em>normilized</em> before search happens. Normalization
+is handy when different languages have sligh variation for same type
+of characters.</p>
 </div>
-<div class="section-summary">
+<div class="paragraph">
+<p>Search algorithm is selected based on a search syntax shown in
+below table.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Search syntax</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Token</th>
+<th class="tableblock halign-left valign-top">Match type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hell</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">fuzzy-match</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Items that match <code>hello</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>'stuff</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">exact-match</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Items that include <code>stuff</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">SearchMatch searchMatch = SearchMatch.builder()
+	.caseSensitive(false)
+	.normalize(false)
+	.forward(true)
+	.build();
+
+SearchMatchResult result = searchMatch.match("foo bar baz", "fbb");
+
+result.getStart();
+// 0 - start position inclusive
+result.getEnd();
+// 9 - end position exclusive
+result.getPositions();
+// 0,4,8 - positions, inclusive
+result.getScore();
+// 112 - score
+result.getAlgorithm();
+// FuzzyMatchV2SearchMatchAlgorithm - resolved algo</code></pre>
+</div>
+</div>
+</div>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="getting-started.html">Getting Started</a></span>
+  <span class="prev"><a href="appendices-techical-intro-theming.html">Theming</a></span>
+  <span class="next"><a href="appendices-debugging.html">Debugging</a></span>
 </nav>
 </article>
 </div>  </div>
